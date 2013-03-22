@@ -17,6 +17,8 @@ typedef void (^FPTouchedInsideBlock)();
     __strong FPTouchedInsideBlock  _insideBlock;
 }
 
+@property(nonatomic,assign) BOOL isModal;
+
 -(void)setTouchedOutsideBlock:(FPTouchedOutsideBlock)outsideBlock;
 
 -(void)setTouchedInsideBlock:(FPTouchedInsideBlock)insideBlock;

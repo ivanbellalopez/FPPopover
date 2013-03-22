@@ -54,6 +54,7 @@
 @synthesize tint = _tint;
 @synthesize border = _border;
 @synthesize alpha = _alpha;
+@synthesize isModal = _isModal;
 
 -(void)addObservers
 {
@@ -582,5 +583,13 @@
     _alpha = alpha;
     self.view.alpha = alpha;
 }
+
+#pragma mark Modal
+-(void)setIsModal:(BOOL)isModal
+{
+  _isModal = isModal;
+  self.touchView.isModal = isModal;
+}
+
 
 @end

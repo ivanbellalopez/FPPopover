@@ -11,6 +11,8 @@
 
 @implementation FPTouchView
 
+@synthesize isModal = _isModal;
+
 -(void)dealloc
 {
 #ifdef FP_DEBUG
@@ -65,7 +67,7 @@
         {
             _insideBlock();
         }
-        else if(!touchedInside && _outsideBlock)
+        else if(!touchedInside && _outsideBlock && !_isModal)
         {
             _outsideBlock();
         }

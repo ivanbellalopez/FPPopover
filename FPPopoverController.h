@@ -39,6 +39,7 @@
 /** @brief allow reading in order to integrate other open-source **/
 @property(nonatomic,readonly) FPTouchView* touchView;
 @property(nonatomic,readonly) FPPopoverView* contentView;
+@property(nonatomic,assign) BOOL isModal;
 
 @property(nonatomic,assign) FPPopoverArrowDirection arrowDirection;
 
