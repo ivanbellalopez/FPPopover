@@ -52,8 +52,12 @@
 @synthesize origin = _origin;
 @synthesize arrowDirection = _arrowDirection;
 @synthesize tint = _tint;
+@synthesize customTint = _customTint;
 @synthesize border = _border;
 @synthesize alpha = _alpha;
+@synthesize usesGradient = _usesGradient;
+@synthesize lineBorder = _lineBorder;
+@synthesize customLineBorderColor = _customLineBorderColor;
 @synthesize isModal = _isModal;
 
 -(void)addObservers
@@ -163,6 +167,13 @@
 -(FPPopoverTint)tint
 {
     return _contentView.tint;
+}
+
+-(void)setCustomTint:(UIColor *)customTint
+{
+  _contentView.tint = FPPopoverCustomTint;
+  _contentView.customTint = customTint;
+  [_contentView setNeedsDisplay];
 }
 
 #pragma mark - View lifecycle
@@ -582,6 +593,29 @@
 {
     _alpha = alpha;
     self.view.alpha = alpha;
+}
+
+#pragma mark Use of gradients
+-(void)setUsesGradient:(BOOL)usesGradient
+{
+  _usesGradient = usesGradient;
+  _contentView.usesGradient = usesGradient;
+  [_contentView setNeedsDisplay];
+}
+
+#pragma mark Border lines
+-(void)setLineBorder:(BOOL)lineBorder
+{
+  _lineBorder = lineBorder;
+  _contentView.lineBorder = lineBorder;
+  [_contentView setNeedsDisplay];
+}
+
+-(void)setCustomLineBorderColor:(UIColor *)customLineBorderColor
+{
+  _customLineBorderColor = customLineBorderColor;
+  _contentView.customLineBorderColor = customLineBorderColor;
+  [_contentView setNeedsDisplay];
 }
 
 #pragma mark Modal

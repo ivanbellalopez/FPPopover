@@ -36,6 +36,10 @@
 @synthesize tint = _tint;
 @synthesize draw3dBorder = _draw3dBorder;
 @synthesize border = _border;
+@synthesize customTint = _customTint;
+@synthesize usesGradient = _usesGradient;
+@synthesize lineBorder = _lineBorder;
+@synthesize customLineBorderColor = _customLineBorderColor;
 
 -(void)dealloc
 {
@@ -69,6 +73,11 @@
         
         //border
         self.border = YES;
+        self.lineBorder = YES;
+        self.customLineBorderColor = nil;
+
+        //Gradient
+        self.usesGradient = YES;
         
         _titleLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         _titleLabel.backgroundColor = [UIColor clearColor];
@@ -354,18 +363,14 @@
 - (void)drawRect:(CGRect)rect
 {
     [super drawRect:rect];
-    
 
-    CGGradientRef gradient = [self newGradient];
-    
-    
     CGContextRef ctx = UIGraphicsGetCurrentContext();    
     CGContextSaveGState(ctx);
     
     //content fill
     CGPathRef contentPath = [self newContentPathWithBorderWidth:2.0 arrowDirection:_arrowDirection];
-    
-    
+
+
     CGContextAddPath(ctx, contentPath);
     CGContextClip(ctx);
 
@@ -383,11 +388,17 @@
         end = CGPointMake(self.bounds.size.width/2.0,20);
     }
 
+    if (_usesGradient)
+    {
+      CGGradientRef gradient = [self newGradient];
+      CGContextDrawLinearGradient(ctx, gradient, start, end, 0);
+      CGGradientRelease(gradient);
+    }
+    else
+    {
+      end.y = 0;
+    }
 
-    
-    CGContextDrawLinearGradient(ctx, gradient, start, end, 0);
-    
-    CGGradientRelease(gradient);
     //fill the other part of path
     if(self.tint == FPPopoverBlackTint)
     {
@@ -409,43 +420,56 @@
     {
         CGContextSetRGBFillColor(ctx, 1, 1, 1, 1.0);
     }
-
-    
-    CGContextFillRect(ctx, CGRectMake(0, end.y, self.bounds.size.width, self.bounds.size.height-end.y));
-    //internal border
-    CGContextBeginPath(ctx);
-    CGContextAddPath(ctx, contentPath);
-    CGContextSetRGBStrokeColor(ctx, 0.7, 0.7, 0.7, 1.0);
-    CGContextSetLineWidth(ctx, 1);
-    CGContextSetLineCap(ctx,kCGLineCapRound);
-    CGContextSetLineJoin(ctx, kCGLineJoinRound);
-    CGContextStrokePath(ctx);
-    CGPathRelease(contentPath);
-
-    //external border
-    CGPathRef externalBorderPath = [self newContentPathWithBorderWidth:1.0 arrowDirection:_arrowDirection];
-    CGContextBeginPath(ctx);
-    CGContextAddPath(ctx, externalBorderPath);
-    CGContextSetRGBStrokeColor(ctx, 0.4, 0.4, 0.4, 1.0);
-    CGContextSetLineWidth(ctx, 1);
-    CGContextSetLineCap(ctx,kCGLineCapRound);
-    CGContextSetLineJoin(ctx, kCGLineJoinRound);
-    CGContextStrokePath(ctx);
-    CGPathRelease(externalBorderPath);
-
-    //3D border of the content view
-    if(self.draw3dBorder) {
-        CGRect cvRect = _contentView.frame;
-        //firstLine
-        CGContextSetRGBStrokeColor(ctx, 0.7, 0.7, 0.7, 1.0);
-        CGContextStrokeRect(ctx, cvRect);
-        //secondLine
-        cvRect.origin.x -= 1; cvRect.origin.y -= 1; cvRect.size.height += 2; cvRect.size.width += 2;
-        CGContextSetRGBStrokeColor(ctx, 0.4, 0.4, 0.4, 1.0);
-        CGContextStrokeRect(ctx, cvRect);        
+    else if(self.tint == FPPopoverCustomTint)
+    {
+      CGContextSetFillColorWithColor(ctx,  self.customTint.CGColor);
     }
-    
-    
+
+
+    CGContextFillRect(ctx, CGRectMake(0, end.y, self.bounds.size.width, self.bounds.size.height-end.y));
+    if (self.lineBorder)
+    {
+      //internal border
+      CGContextBeginPath(ctx);
+      CGContextAddPath(ctx, contentPath);
+      if (!_customLineBorderColor)
+        CGContextSetRGBStrokeColor(ctx, 0.7, 0.7, 0.7, 1.0);
+      else
+        CGContextSetStrokeColorWithColor(ctx, _customLineBorderColor.CGColor);
+      CGContextSetLineWidth(ctx, 1);
+      CGContextSetLineCap(ctx,kCGLineCapRound);
+      CGContextSetLineJoin(ctx, kCGLineJoinRound);
+      CGContextStrokePath(ctx);
+      CGPathRelease(contentPath);
+
+      //external border
+      CGPathRef externalBorderPath = [self newContentPathWithBorderWidth:1.0 arrowDirection:_arrowDirection];
+      CGContextBeginPath(ctx);
+      CGContextAddPath(ctx, externalBorderPath);
+      CGContextSetRGBStrokeColor(ctx, 0.4, 0.4, 0.4, 1.0);
+      CGContextSetLineWidth(ctx, 1);
+      CGContextSetLineCap(ctx,kCGLineCapRound);
+      CGContextSetLineJoin(ctx, kCGLineJoinRound);
+      CGContextStrokePath(ctx);
+      CGPathRelease(externalBorderPath);
+
+      //3D border of the content view
+      if(self.draw3dBorder) {
+          CGRect cvRect = _contentView.frame;
+          //firstLine
+          CGContextSetRGBStrokeColor(ctx, 0.7, 0.7, 0.7, 1.0);
+          CGContextStrokeRect(ctx, cvRect);
+          //secondLine
+          cvRect.origin.x -= 1; cvRect.origin.y -= 1; cvRect.size.height += 2; cvRect.size.width += 2;
+          CGContextSetRGBStrokeColor(ctx, 0.4, 0.4, 0.4, 1.0);
+          CGContextStrokeRect(ctx, cvRect);        
+      }
+	}
+    else
+    {
+      CGPathRelease(contentPath);
+    }
+
     CGContextRestoreGState(ctx);
 }
 

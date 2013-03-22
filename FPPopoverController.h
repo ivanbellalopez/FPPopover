@@ -49,9 +49,13 @@
 
 /** @brief The tint of the popover. **/
 @property(nonatomic,assign) FPPopoverTint tint;
+@property(nonatomic,strong) UIColor *customTint;
+@property(nonatomic,assign) BOOL usesGradient;
 
 /** @brief Popover border, default is YES **/
-@property(nonatomic, assign) BOOL border;
+@property(nonatomic,assign) BOOL border;
+@property(nonatomic,assign) BOOL lineBorder;
+@property(nonatomic,strong) UIColor *customLineBorderColor;
 
 /** @brief Initialize the popover with the content view controller
  **/
