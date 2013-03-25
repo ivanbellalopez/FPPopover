@@ -564,14 +564,22 @@
     }
 
     //check if the developer wants and arrow
+    //and use the frame calculated
     if(self.arrowDirection != FPPopoverNoArrow)
-        _contentView.arrowDirection = bestDirection;
-    
-    //no arrow
-    else _contentView.arrowDirection = FPPopoverNoArrow;
-
-    //using the frame calculated
-    _contentView.frame = r;
+    {
+      _contentView.arrowDirection = bestDirection;
+      _contentView.frame = r;
+    }
+    else
+    {
+      //no arrow
+      _contentView.arrowDirection = FPPopoverNoArrow;
+      // And center the frame in the screen
+      CGRect aframe = _contentView.frame;
+      aframe.size = r.size;
+      _contentView.frame = aframe;
+      _contentView.center = self.view.center;
+    }
 
     self.origin = CGPointMake(p.x + v.frame.size.width/2.0, p.y + v.frame.size.height/2.0);
     _contentView.relativeOrigin = [_parentView convertPoint:self.origin toView:_contentView];
