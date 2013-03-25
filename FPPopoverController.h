@@ -60,6 +60,9 @@
 @property(nonatomic,assign) BOOL lineBorder;
 @property(nonatomic,strong) UIColor *customLineBorderColor;
 
+/** @brief Popover animation when being presented, defaults NO **/
+@property(nonatomic,assign) BOOL *shouldPresentWithBounce;
+
 /** @brief Popover visibility, to conform UIPopover API **/
 @property(nonatomic,readonly,getter=isPopoverVisible) BOOL visible;
 

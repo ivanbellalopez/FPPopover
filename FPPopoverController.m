@@ -59,6 +59,7 @@
 @synthesize lineBorder = _lineBorder;
 @synthesize customLineBorderColor = _customLineBorderColor;
 @synthesize isModal = _isModal;
+@synthesize shouldPresentWithBounce = _shouldPresentWithBounce;
 @synthesize visible = _visible;
 
 -(void)addObservers
@@ -120,6 +121,7 @@
 		self.delegate = delegate;
 		
 		_visible = NO;
+		self.shouldPresentWithBounce = NO;
         
         self.alpha = 1.0;
         self.arrowDirection = FPPopoverArrowDirectionAny;
@@ -294,6 +296,37 @@
     } completion:^(BOOL finished) {
 	
 		_visible = YES;
+		
+		if (self.shouldPresentWithBounce)
+		{
+          CGFloat time = 0.0;
+          CGFloat currentScale = 1.0;
+          int steps = 15;
+          CGFloat timeStep = 0.2;
+          NSMutableArray *animationArray = [[NSMutableArray alloc] initWithCapacity:steps];
+          for (int t = 0; t < steps ; t++)
+          {
+            CGFloat newScale = pow(M_E, -t) * cos(4.0*t+M_PI/2.0) + 1.0;
+            CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"transform"];
+            animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
+            animation.fromValue = [NSValue valueWithCATransform3D:CATransform3DMakeScale(currentScale,currentScale,1.0)];
+            animation.toValue =   [NSValue valueWithCATransform3D:CATransform3DMakeScale(newScale, newScale, 1.0)];
+            animation.removedOnCompletion=YES;
+            animation.beginTime = time;
+            animation.duration = timeStep;
+            
+            [animationArray addObject:animation];
+            
+            currentScale = newScale;
+            time+=timeStep;
+            timeStep-=0.015;
+          }
+          
+          CAAnimationGroup *group = [CAAnimationGroup animation];
+          [group setDuration:time];
+          [group setAnimations:animationArray];          
+          [self.view.layer addAnimation:group forKey:@"zoom"];
+		}
 		
     }];
     
