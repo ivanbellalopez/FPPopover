@@ -25,6 +25,9 @@
 @end
 
 @interface FPPopoverController : UIViewController
+{
+	BOOL isNavigationController;
+}
 
 //ARC-enable and disable support
 #if __has_feature(objc_arc)

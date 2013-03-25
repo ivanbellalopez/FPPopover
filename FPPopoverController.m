@@ -138,12 +138,20 @@
             [bself dismissPopoverAnimated:YES];
         }];
 
-        self.contentSize = CGSizeMake(200, 300); //default size
+        isNavigationController = [viewController isKindOfClass:[UINavigationController class]];
+
+        if (!isNavigationController)
+          self.contentSize = viewController.contentSizeForViewInPopover;
+        else
+          self.contentSize = [(UIViewController *)[[(UINavigationController *)viewController  viewControllers] objectAtIndex:0] contentSizeForViewInPopover];
+      
+        self.contentSize = CGSizeMake (self.contentSize.width+20, self.contentSize.height+20+(isNavigationController?40:0));
 
         _contentView = [[FPPopoverView alloc] initWithFrame:CGRectMake(0, 0, 
                                               self.contentSize.width, self.contentSize.height)];
         
         _viewController = viewController;
+        _viewController.view.clipsToBounds = YES;
         
         [_touchView addSubview:_contentView];
         
@@ -207,6 +215,16 @@
 
     [self setupView];
     [self addObservers];
+}
+
+- (void) viewWillLayoutSubviews
+{
+  [super viewWillLayoutSubviews];
+	
+  if (isNavigationController)
+    [(UINavigationController *)_viewController navigationBar].frame = CGRectMake(0.0, 0.0, [(UINavigationController *)_viewController navigationBar].frame.size.width, [(UINavigationController *)_viewController navigationBar].frame.size.height);
+
+  [self setupView];
 }
 
 #pragma mark Orientation
@@ -561,6 +579,13 @@
     if([[UIApplication sharedApplication] isStatusBarHidden] == NO)
     {
         if(r.origin.y <= 20) r.origin.y += 20;
+    }
+
+	// Status Bar also exists in the UINavigationController used.
+    if (isNavigationController)
+    {
+      //r.origin.y -= 20;
+      r.size.height += 20;
     }
 
     //check if the developer wants and arrow
