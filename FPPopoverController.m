@@ -60,6 +60,7 @@
 @synthesize customLineBorderColor = _customLineBorderColor;
 @synthesize isModal = _isModal;
 @synthesize shouldPresentWithBounce = _shouldPresentWithBounce;
+@synthesize shouldHideOnRotation = _shouldHideOnRotation;
 @synthesize visible = _visible;
 
 -(void)addObservers
@@ -68,6 +69,7 @@
 
   [nc addObserver:self selector:@selector(willPresentNewPopover:) name:@"FPNewPopoverPresented" object:nil];
   [nc addObserver:self selector:@selector(deviceOrientationDidChange:) name:UIApplicationDidChangeStatusBarOrientationNotification object:nil];
+  [nc addObserver:self selector:@selector(deviceOrientationWillChange:) name:UIApplicationWillChangeStatusBarOrientationNotification object:nil];
     
   _deviceOrientation = [UIApplication sharedApplication].statusBarOrientation;
 }
@@ -78,6 +80,7 @@
 
   [nc removeObserver:self name:@"FPNewPopoverPresented" object:nil];
   [nc removeObserver:self name:UIApplicationDidChangeStatusBarOrientationNotification object:nil];
+  [nc removeObserver:self name:UIApplicationWillChangeStatusBarOrientationNotification object:nil];
 
   [_viewController removeObserver:self forKeyPath:@"title"];
 }
@@ -118,6 +121,7 @@
 		
 		_visible = NO;
 		self.shouldPresentWithBounce = NO;
+		self.shouldHideOnRotation = YES;
         
         self.alpha = 1.0;
         self.arrowDirection = FPPopoverArrowDirectionAny;
@@ -422,12 +426,23 @@
 
 #pragma mark observing
 
+-(void)deviceOrientationWillChange:(NSNotification*)notification
+{
+  if (self.shouldHideOnRotation)
+    self.view.alpha = 0.0;
+}
+
 -(void)deviceOrientationDidChange:(NSNotification*)notification
 {
-	_deviceOrientation = [UIApplication sharedApplication].statusBarOrientation;
+  _deviceOrientation = [UIApplication sharedApplication].statusBarOrientation;
 
   [UIView animateWithDuration:0.2 animations:^{
     [self setupView];
+  } completion:^(BOOL finished) {
+    if (self.shouldHideOnRotation)
+      [UIView animateWithDuration:0.0 delay:0.5 options:nil animations:^{
+      self.view.alpha = 1.0;
+      } completion:nil];
   }];
 }
 
