@@ -18,7 +18,7 @@
     UIWindow *_window;
     UIView *_parentView;
     UIView *_fromView;
-    UIDeviceOrientation _deviceOrientation;
+    UIInterfaceOrientation _deviceOrientation;
     
     BOOL _shadowsHidden;
     CGColorRef _shadowColor;
@@ -64,26 +64,22 @@
 
 -(void)addObservers
 {
-    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];   
+  NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+
+  [nc addObserver:self selector:@selector(willPresentNewPopover:) name:@"FPNewPopoverPresented" object:nil];
+  [nc addObserver:self selector:@selector(deviceOrientationDidChange:) name:UIApplicationDidChangeStatusBarOrientationNotification object:nil];
     
-    [[NSNotificationCenter defaultCenter] 
-     addObserver:self 
-     selector:@selector(deviceOrientationDidChange:) 
-     name:@"UIDeviceOrientationDidChangeNotification" 
-     object:nil]; 
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(willPresentNewPopover:) name:@"FPNewPopoverPresented" object:nil];
-    
-    _deviceOrientation = [UIDevice currentDevice].orientation;
-    
+  _deviceOrientation = [UIApplication sharedApplication].statusBarOrientation;
 }
 
 -(void)removeObservers
 {
-    [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [_viewController removeObserver:self forKeyPath:@"title"];
+  NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+
+  [nc removeObserver:self name:@"FPNewPopoverPresented" object:nil];
+  [nc removeObserver:self name:UIApplicationDidChangeStatusBarOrientationNotification object:nil];
+
+  [_viewController removeObserver:self forKeyPath:@"title"];
 }
 
 
@@ -423,50 +419,18 @@
     _origin = origin;
 }
 
+
 #pragma mark observing
-
-
 
 -(void)deviceOrientationDidChange:(NSNotification*)notification
 {
-	_deviceOrientation = [UIDevice currentDevice].orientation;
+	_deviceOrientation = [UIApplication sharedApplication].statusBarOrientation;
 
-	BOOL shouldResetView = NO;
-
-    //iOS6 has a new orientation implementation.
-    //we ask to reset the view if is >= 6.0
-	if ([_viewController respondsToSelector:@selector(shouldAutorotateToInterfaceOrientation:)] &&
-        [[[UIDevice currentDevice] systemVersion] floatValue] < 6.0)
-	{
-		UIInterfaceOrientation interfaceOrientation;
-		switch (_deviceOrientation)
-		{
-			case UIDeviceOrientationLandscapeLeft:
-				interfaceOrientation = UIInterfaceOrientationLandscapeLeft;
-				break;
-			case UIDeviceOrientationLandscapeRight:
-				interfaceOrientation = UIInterfaceOrientationLandscapeRight;
-				break;
-			case UIDeviceOrientationPortrait:
-				interfaceOrientation = UIInterfaceOrientationPortrait;
-				break;
-			case UIDeviceOrientationPortraitUpsideDown:
-				interfaceOrientation = UIInterfaceOrientationPortraitUpsideDown;
-				break;
-			default:
-				return;	// just ignore face up / face down, etc.
-		}
-	}
-	else
-	{
-		shouldResetView = YES;
-	}
-
-	if (shouldResetView)
-		[UIView animateWithDuration:0.2 animations:^{
-			[self setupView]; 
-		}];
+  [UIView animateWithDuration:0.2 animations:^{
+    [self setupView];
+  }];
 }
+
 
 -(void)willPresentNewPopover:(NSNotification*)notification
 {
