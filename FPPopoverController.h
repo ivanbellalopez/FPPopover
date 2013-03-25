@@ -27,6 +27,7 @@
 @interface FPPopoverController : UIViewController
 {
 	BOOL isNavigationController;
+	CGFloat keyboardHeight;
 }
 
 //ARC-enable and disable support
@@ -96,8 +97,6 @@ typedef void (^FPPopoverCompletion)();
 
 /** @brief Hide the shadows to get better performances **/
 -(void)setShadowsHidden:(BOOL)hidden;
-
-
 
 
 @end

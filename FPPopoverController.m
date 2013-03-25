@@ -70,6 +70,8 @@
   [nc addObserver:self selector:@selector(willPresentNewPopover:) name:@"FPNewPopoverPresented" object:nil];
   [nc addObserver:self selector:@selector(deviceOrientationDidChange:) name:UIApplicationDidChangeStatusBarOrientationNotification object:nil];
   [nc addObserver:self selector:@selector(deviceOrientationWillChange:) name:UIApplicationWillChangeStatusBarOrientationNotification object:nil];
+  [nc addObserver:self selector:@selector(keyboardWasShown:) name: UIKeyboardDidShowNotification object:nil];
+  [nc addObserver:self selector:@selector(keyboardWasHidden:) name: UIKeyboardDidHideNotification object:nil];
     
   _deviceOrientation = [UIApplication sharedApplication].statusBarOrientation;
 }
@@ -81,6 +83,8 @@
   [nc removeObserver:self name:@"FPNewPopoverPresented" object:nil];
   [nc removeObserver:self name:UIApplicationDidChangeStatusBarOrientationNotification object:nil];
   [nc removeObserver:self name:UIApplicationWillChangeStatusBarOrientationNotification object:nil];
+  [nc removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+  [nc removeObserver:self name:UIKeyboardWillHideNotification object:nil];
 
   [_viewController removeObserver:self forKeyPath:@"title"];
 }
@@ -248,7 +252,7 @@
 }
 -(CGFloat)parentHeight
 {
-    return _parentView.bounds.size.height;
+    return _parentView.bounds.size.height - keyboardHeight;;
     //return UIDeviceOrientationIsPortrait(_deviceOrientation) ? _parentView.frame.size.height : _parentView.frame.size.width;
 }
 
@@ -446,6 +450,20 @@
   }];
 }
 
+- (void) keyboardWasShown:(NSNotification*)notification
+{
+  NSDictionary *userInfo = [notification userInfo];
+  CGSize kbSize = [[userInfo objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+  keyboardHeight = UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation]) ? kbSize.height : kbSize.width;
+  keyboardHeight += 20; // Adds some space between the keyboard and the popover
+  [self setupView];
+}
+
+- (void) keyboardWasHidden:(NSNotification*)notification
+{
+  keyboardHeight = 0;
+  [self setupView];
+}
 
 -(void)willPresentNewPopover:(NSNotification*)notification
 {
