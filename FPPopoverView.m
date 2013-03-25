@@ -11,8 +11,8 @@
 #import "ARCMacros.h"
 
 #define FP_POPOVER_ARROW_HEIGHT 20.0
-#define FP_POPOVER_ARROW_BASE 20.0
-#define FP_POPOVER_RADIUS 10.0
+#define FP_POPOVER_ARROW_BASE 30.0
+#define FP_POPOVER_RADIUS 5.0
 
 //iVars
 @interface FPPopoverView()
@@ -62,7 +62,7 @@
         self.clipsToBounds = YES;
         
         self.layer.shadowOpacity = 0.7;
-        self.layer.shadowRadius = 5;
+        self.layer.shadowRadius = FP_POPOVER_RADIUS / 2.0;
         self.layer.shadowOffset = CGSizeMake(-3, 3);
 
         //to get working the animations
@@ -141,7 +141,7 @@
     
     //NO BORDER
     if(self.border == NO) {
-        b = 10.0;
+        b = 8.0;
     }
     
     CGRect rect;
@@ -436,7 +436,7 @@
         CGContextSetRGBStrokeColor(ctx, 0.7, 0.7, 0.7, 1.0);
       else
         CGContextSetStrokeColorWithColor(ctx, _customLineBorderColor.CGColor);
-      CGContextSetLineWidth(ctx, 1);
+      CGContextSetLineWidth(ctx, 4);
       CGContextSetLineCap(ctx,kCGLineCapRound);
       CGContextSetLineJoin(ctx, kCGLineJoinRound);
       CGContextStrokePath(ctx);
@@ -464,7 +464,7 @@
           CGContextSetRGBStrokeColor(ctx, 0.4, 0.4, 0.4, 1.0);
           CGContextStrokeRect(ctx, cvRect);        
       }
-	}
+    }
     else
     {
       CGPathRelease(contentPath);
@@ -528,8 +528,8 @@
         contentRect.size = CGSizeMake(self.bounds.size.width-20, self.bounds.size.height-50);
         _titleLabel.frame = CGRectMake(10, 10, self.bounds.size.width-20, 20);
 		if (self.title==nil || self.title.length==0) {
-			contentRect.origin = CGPointMake(10, 30);
-			contentRect.size = CGSizeMake(self.bounds.size.width-20, self.bounds.size.height-40);
+			contentRect.origin = CGPointMake(10, 10);
+			contentRect.size = CGSizeMake(self.bounds.size.width-20, self.bounds.size.height-20);
 		}
     }
 
