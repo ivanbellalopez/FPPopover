@@ -59,6 +59,7 @@
 @synthesize lineBorder = _lineBorder;
 @synthesize customLineBorderColor = _customLineBorderColor;
 @synthesize isModal = _isModal;
+@synthesize visible = _visible;
 
 -(void)addObservers
 {
@@ -102,6 +103,10 @@
     SAFE_ARC_SUPER_DEALLOC();
 }
 
+-(id)initWithContentViewController:(UIViewController*)viewController{
+  return [self initWithViewController:viewController];
+}
+
 -(id)initWithViewController:(UIViewController*)viewController {
 	return [self initWithViewController:viewController delegate:nil];
 }
@@ -113,6 +118,8 @@
     if(self)
     {
 		self.delegate = delegate;
+		
+		_visible = NO;
         
         self.alpha = 1.0;
         self.arrowDirection = FPPopoverArrowDirectionAny;
@@ -265,6 +272,11 @@
     [UIView animateWithDuration:0.2 animations:^{
         
         self.view.alpha = self.alpha;
+
+    } completion:^(BOOL finished) {
+	
+		_visible = YES;
+		
     }];
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"FPNewPopoverPresented" object:self];
@@ -303,6 +315,20 @@
 {
      _fromView = fromView;
     [self presentPopoverFromPoint:[self originFromView:_fromView]];
+}
+
+-(void)presentPopoverFromRect:(CGRect)fromRect inView:(UIView *)view permittedArrowDirections:(FPPopoverArrowDirection)arrowDirections animated:(BOOL)animated
+{
+  self.arrowDirection = arrowDirections;
+  
+  for (UIView *subview in [view subviews])
+  {
+    if (CGRectEqualToRect(fromRect, subview.frame))
+    {
+      [self presentPopoverFromView:subview];
+      return;
+    }
+  }
 }
 
 -(void)dismissPopover

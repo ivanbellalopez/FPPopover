@@ -57,17 +57,26 @@
 @property(nonatomic,assign) BOOL lineBorder;
 @property(nonatomic,strong) UIColor *customLineBorderColor;
 
+/** @brief Popover visibility, to conform UIPopover API **/
+@property(nonatomic,readonly,getter=isPopoverVisible) BOOL visible;
+
 /** @brief Initialize the popover with the content view controller
  **/
 -(id)initWithViewController:(UIViewController*)viewController;
 -(id)initWithViewController:(UIViewController*)viewController
 				   delegate:(id<FPPopoverControllerDelegate>)delegate;
 
+/** @brief Initialize the popover with the content view controller to conform UIPopover API **/				
+-(id)initWithContentViewController:(UIViewController*)viewController;
+
 /** @brief Presenting the popover from a specified view **/
 -(void)presentPopoverFromView:(UIView*)fromView;
 
 /** @brief Presenting the popover from a specified point **/
 -(void)presentPopoverFromPoint:(CGPoint)fromPoint;
+
+/** @brief Presenting the popover from a specified rect in view to conform UIPopover API **/
+-(void)presentPopoverFromRect:(CGRect)fromRect inView:(UIView *)view permittedArrowDirections:(FPPopoverArrowDirection)arrowDirections animated:(BOOL)animated;
 
 /** @brief Dismiss the popover **/
 -(void)dismissPopoverAnimated:(BOOL)animated;
