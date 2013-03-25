@@ -139,7 +139,7 @@
         [self.view addSubview:_touchView];
         
         
-        __block typeof (self) bself = self;
+        __weak typeof (self) bself = self;
         [_touchView setTouchedOutsideBlock:^{
             [bself dismissPopoverAnimated:YES];
         }];
