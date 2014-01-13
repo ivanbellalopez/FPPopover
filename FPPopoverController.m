@@ -149,7 +149,7 @@
         if (!isNavigationController)
           self.contentSize = viewController.contentSizeForViewInPopover;
         else
-          self.contentSize = [(UIViewController *)[[(UINavigationController *)viewController  viewControllers] objectAtIndex:0] contentSizeForViewInPopover];
+          self.contentSize = [(UIViewController *)[(UINavigationController *)viewController  viewControllers][0] contentSizeForViewInPopover];
       
         self.contentSize = CGSizeMake (self.contentSize.width+20, self.contentSize.height+20+(isNavigationController?40:0));
 
@@ -274,11 +274,11 @@
     if(windows.count > 0)
     {
           _parentView=nil;
-        _window = [windows objectAtIndex:0];
+        _window = windows[0];
         //keep the first subview
         if(_window.subviews.count > 0)
         {
-            _parentView = [_window.subviews objectAtIndex:0];
+            _parentView = (_window.subviews)[0];
             [_parentView addSubview:self.view];
             [_viewController viewDidAppear:YES];
         }
@@ -453,7 +453,7 @@
 - (void) keyboardWasShown:(NSNotification*)notification
 {
   NSDictionary *userInfo = [notification userInfo];
-  CGSize kbSize = [[userInfo objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+  CGSize kbSize = [userInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
   keyboardHeight = UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation]) ? kbSize.height : kbSize.width;
   keyboardHeight += 20; // Adds some space between the keyboard and the popover
   [self setupView];
