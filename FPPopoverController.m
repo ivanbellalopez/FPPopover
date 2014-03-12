@@ -455,7 +455,7 @@
   NSDictionary *userInfo = [notification userInfo];
   CGSize kbSize = [userInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
   keyboardHeight = UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation]) ? kbSize.height : kbSize.width;
-  keyboardHeight += 20; // Adds some space between the keyboard and the popover
+//  keyboardHeight += 20; // Adds some space between the keyboard and the popover
   [self setupView];
 }
 
@@ -591,6 +591,26 @@
         CGFloat old_y = r.origin.y;
         r.origin.y = 0;
         r.size.height += old_y;
+    }
+
+    //need to move up because of keyboard
+    if (keyboardHeight>0)
+    {
+      if (CGRectGetMaxY(r)>[self parentHeight])
+      {
+        CGFloat newY = r.origin.y - (CGRectGetMaxY(r)-[self parentHeight]);
+
+//        if ([self parentHeight] - r.size.height > 0)
+//        {
+//          newY = [self parentHeight] - r.size.height;
+//        }
+//        else
+//        {
+//          newY = r.origin.y - (CGRectGetMaxY(r)-[self parentHeight]);
+//        }
+
+        r.origin.y = newY;
+      }
     }
     
     //need to be resized horizontally ?
