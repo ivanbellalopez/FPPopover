@@ -22,6 +22,8 @@
     
     BOOL _shadowsHidden;
     CGColorRef _shadowColor;
+
+    BOOL shouldAnimateOnKeyboardShown;
 }
 @end
 
@@ -70,8 +72,8 @@
   [nc addObserver:self selector:@selector(willPresentNewPopover:) name:@"FPNewPopoverPresented" object:nil];
   [nc addObserver:self selector:@selector(deviceOrientationDidChange:) name:UIApplicationDidChangeStatusBarOrientationNotification object:nil];
   [nc addObserver:self selector:@selector(deviceOrientationWillChange:) name:UIApplicationWillChangeStatusBarOrientationNotification object:nil];
-  [nc addObserver:self selector:@selector(keyboardWasShown:) name: UIKeyboardDidShowNotification object:nil];
-  [nc addObserver:self selector:@selector(keyboardWasHidden:) name: UIKeyboardDidHideNotification object:nil];
+  [nc addObserver:self selector:@selector(keyboardWillShow:) name: UIKeyboardWillShowNotification object:nil];
+  [nc addObserver:self selector:@selector(keyboardWillHide:) name: UIKeyboardWillHideNotification object:nil];
     
   _deviceOrientation = [UIApplication sharedApplication].statusBarOrientation;
 }
@@ -439,6 +441,7 @@
 -(void)deviceOrientationDidChange:(NSNotification*)notification
 {
   _deviceOrientation = [UIApplication sharedApplication].statusBarOrientation;
+  shouldAnimateOnKeyboardShown = NO;
 
   [UIView animateWithDuration:0.2 animations:^{
     [self setupView];
@@ -450,19 +453,39 @@
   }];
 }
 
-- (void) keyboardWasShown:(NSNotification*)notification
+- (void) keyboardWillShow:(NSNotification*)notification
 {
   NSDictionary *userInfo = [notification userInfo];
   CGSize kbSize = [userInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+  CGFloat animationDuration = shouldAnimateOnKeyboardShown ? [userInfo[UIKeyboardAnimationDurationUserInfoKey] floatValue] : 0.0;
+  NSUInteger animationType = [userInfo[UIKeyboardAnimationCurveUserInfoKey] unsignedIntegerValue];
   keyboardHeight = UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation]) ? kbSize.height : kbSize.width;
 //  keyboardHeight += 20; // Adds some space between the keyboard and the popover
-  [self setupView];
+  [UIView animateWithDuration:animationDuration
+                        delay:0.0
+                      options:animationType
+                   animations:^{
+                     [self setupView];
+                   }
+                   completion:^(BOOL finished){
+                     shouldAnimateOnKeyboardShown = NO;
+                   }];
 }
 
-- (void) keyboardWasHidden:(NSNotification*)notification
+- (void) keyboardWillHide:(NSNotification*)notification
 {
   keyboardHeight = 0;
-  [self setupView];
+  shouldAnimateOnKeyboardShown = YES;
+  NSDictionary *userInfo = [notification userInfo];
+  CGFloat animationDuration = [userInfo[UIKeyboardAnimationDurationUserInfoKey] floatValue];
+  NSUInteger animationType = [userInfo[UIKeyboardAnimationCurveUserInfoKey] unsignedIntegerValue];
+  [UIView animateWithDuration:animationDuration
+                        delay:0.0
+                      options:animationType
+                   animations:^{
+                     [self setupView];
+                   }
+                   completion:nil];
 }
 
 -(void)willPresentNewPopover:(NSNotification*)notification
