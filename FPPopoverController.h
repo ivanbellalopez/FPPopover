@@ -70,6 +70,9 @@
 /** @brief Popover visibility, to conform UIPopover API **/
 @property(nonatomic,readonly,getter=isPopoverVisible) BOOL visible;
 
+/** @brief Popover presenting block **/
+@property(nonatomic,copy) void (^popoverPresentingBlock)();
+
 /** @brief Initialize the popover with the content view controller
  **/
 -(id)initWithViewController:(UIViewController*)viewController;
