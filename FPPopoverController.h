@@ -70,6 +70,9 @@
 /** @brief Popover visibility, to conform UIPopover API **/
 @property(nonatomic,readonly,getter=isPopoverVisible) BOOL visible;
 
+/** @brief Popover's context, to assist with determining data object it is bound to **/
+@property(nonatomic,assign) id context;
+
 /** @brief Popover presenting block **/
 @property(nonatomic,copy) void (^popoverPresentingBlock)();
 
