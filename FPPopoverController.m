@@ -149,9 +149,9 @@
         isNavigationController = [viewController isKindOfClass:[UINavigationController class]];
 
         if (!isNavigationController)
-          self.contentSize = viewController.contentSizeForViewInPopover;
+          self.contentSize = viewController.preferredContentSize;
         else
-          self.contentSize = [(UIViewController *)[(UINavigationController *)viewController  viewControllers][0] contentSizeForViewInPopover];
+          self.contentSize = [(UIViewController *)[(UINavigationController *)viewController  viewControllers][0] preferredContentSize];
       
         self.contentSize = CGSizeMake (self.contentSize.width+20, self.contentSize.height+20+(isNavigationController?40:0));
 
