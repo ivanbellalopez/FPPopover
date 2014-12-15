@@ -37,6 +37,8 @@
     @property(nonatomic,assign) id<FPPopoverControllerDelegate> delegate;
 #endif
 
+@property(nonatomic,readonly) UIViewController* viewController;
+
 /** @brief FPPopoverArrowDirectionAny, FPPopoverArrowDirectionVertical or FPPopoverArrowDirectionHorizontal for automatic arrow direction.
  **/
 
