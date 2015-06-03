@@ -337,6 +337,9 @@
     }];
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"FPNewPopoverPresented" object:self];
+
+  if ([_viewController respondsToSelector:@selector(textFieldCanBecomeFirstResponder)])
+    [_viewController performSelector:@selector(textFieldCanBecomeFirstResponder)];
 }
 
 
@@ -457,22 +460,31 @@
 {
   NSDictionary *userInfo = [notification userInfo];
   CGSize kbSize = [userInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
-  CGFloat animationDuration = shouldAnimateOnKeyboardShown ? [userInfo[UIKeyboardAnimationDurationUserInfoKey] floatValue] : 0.0;
-  NSUInteger animationType = [userInfo[UIKeyboardAnimationCurveUserInfoKey] unsignedIntegerValue];
 
   // Previous to iOS 8.0 the keyboard height wasn't correctly define depending on the orientation. This has been fixed so now (iOS 8.0 +)
   // kbSize.height is always the right height of the keyboard.
   keyboardHeight = [[UIDevice currentDevice] isIOS8OrAbove] || UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation]) ? kbSize.height : kbSize.width;
-//  keyboardHeight += 20; // Adds some space between the keyboard and the popover
-  [UIView animateWithDuration:animationDuration
-                        delay:0.0
-                      options:animationType
-                   animations:^{
-                     [self setupView];
-                   }
-                   completion:^(BOOL finished){
-                     shouldAnimateOnKeyboardShown = NO;
-                   }];
+  //  keyboardHeight += 20; // Adds some space between the keyboard and the popover
+
+  if (shouldAnimateOnKeyboardShown)
+  {
+    CGFloat animationDuration = [userInfo[UIKeyboardAnimationDurationUserInfoKey] floatValue];
+    NSUInteger animationType = [userInfo[UIKeyboardAnimationCurveUserInfoKey] unsignedIntegerValue];
+
+    [UIView animateWithDuration:animationDuration
+                          delay:0.0
+                        options:animationType
+                     animations:^{
+                       [self setupView];
+                     }
+                     completion:^(BOOL finished){
+                       shouldAnimateOnKeyboardShown = NO;
+                     }];
+  }
+  else
+  {
+    [self setupView];
+  }
 }
 
 - (void) keyboardWillHide:(NSNotification*)notification
