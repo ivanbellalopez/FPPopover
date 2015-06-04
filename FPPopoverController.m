@@ -466,9 +466,9 @@
   keyboardHeight = [[UIDevice currentDevice] isIOS8OrAbove] || UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation]) ? kbSize.height : kbSize.width;
   //  keyboardHeight += 20; // Adds some space between the keyboard and the popover
 
-  if (shouldAnimateOnKeyboardShown)
+  if (shouldAnimateOnKeyboardShown || ![[UIDevice currentDevice] isIOS8OrAbove])
   {
-    CGFloat animationDuration = [userInfo[UIKeyboardAnimationDurationUserInfoKey] floatValue];
+    CGFloat animationDuration = shouldAnimateOnKeyboardShown ? [userInfo[UIKeyboardAnimationDurationUserInfoKey] floatValue] : 0.0;
     NSUInteger animationType = [userInfo[UIKeyboardAnimationCurveUserInfoKey] unsignedIntegerValue];
 
     [UIView animateWithDuration:animationDuration
@@ -483,6 +483,7 @@
   }
   else
   {
+    // Only in iOS 8 if no animation is needed a direct call must be placed. UIView animateWithDuration:0.0 ... doesn't seem to work properly as it did in iOS 7.
     [self setupView];
   }
 }
