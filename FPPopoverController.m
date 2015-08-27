@@ -557,8 +557,16 @@
 
     FPPopoverArrowDirection bestDirection;
     
-    //if the user wants vertical arrow, check if the content will fit vertically 
-    if(FPPopoverArrowDirectionIsVertical(self.arrowDirection) || 
+    //if the user wants vertical arrow, check if the content will fit vertically
+    if (self.arrowDirection == FPPopoverNoArrow)
+    {
+      bestDirection = FPPopoverNoArrow;
+
+      r.origin.x = self.view.center.x - r.size.width / 2.0;
+      r.origin.y = self.view.center.y - r.size.height / 2.0;
+
+    }
+    else if(FPPopoverArrowDirectionIsVertical(self.arrowDirection) ||
        (self.arrowDirection == FPPopoverArrowDirectionAny && best_h >= best_w))
     {
 
@@ -579,7 +587,7 @@
             r.origin.x = p.x + v.frame.size.width/2.0 - r.size.width/2.0;
             r.origin.y = p.y + v.frame.size.height;
         }
-        
+
 
     }
     
@@ -688,6 +696,7 @@
     {
       //no arrow
       _contentView.arrowDirection = FPPopoverNoArrow;
+      r.size.height -= 20;
       // And center the frame in the screen
       CGRect aframe = _contentView.frame;
       aframe.size = r.size;
