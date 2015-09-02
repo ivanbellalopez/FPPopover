@@ -690,6 +690,7 @@
     if(self.arrowDirection != FPPopoverNoArrow)
     {
       _contentView.arrowDirection = bestDirection;
+      r = CGRectMake((NSInteger) r.origin.x, (NSInteger) r.origin.y, (NSInteger) r.size.width, (NSInteger) r.size.height);
       _contentView.frame = r;
     }
     else
@@ -700,11 +701,12 @@
       // And center the frame in the screen
       CGRect aframe = _contentView.frame;
       aframe.size = r.size;
+      aframe = CGRectMake((NSInteger) aframe.origin.x, (NSInteger) aframe.origin.y, (NSInteger) aframe.size.width, (NSInteger) aframe.size.height);
       _contentView.frame = aframe;
       _contentView.center = self.view.center;
     }
 
-    self.origin = CGPointMake(p.x + v.frame.size.width/2.0, p.y + v.frame.size.height/2.0);
+    self.origin = CGPointMake((NSInteger) (p.x + v.frame.size.width/2.0),(NSInteger) (p.y + v.frame.size.height/2.0));
     _contentView.relativeOrigin = [_parentView convertPoint:self.origin toView:_contentView];
 
     return r;
