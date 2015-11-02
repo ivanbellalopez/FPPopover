@@ -461,31 +461,8 @@
   NSDictionary *userInfo = [notification userInfo];
   CGSize kbSize = [userInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
 
-  // Previous to iOS 8.0 the keyboard height wasn't correctly define depending on the orientation. This has been fixed so now (iOS 8.0 +)
-  // kbSize.height is always the right height of the keyboard.
-  keyboardHeight = [[UIDevice currentDevice] isIOS8OrAbove] || UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation]) ? kbSize.height : kbSize.width;
-  //  keyboardHeight += 20; // Adds some space between the keyboard and the popover
-
-  if (shouldAnimateOnKeyboardShown || ![[UIDevice currentDevice] isIOS8OrAbove])
-  {
-    CGFloat animationDuration = shouldAnimateOnKeyboardShown ? [userInfo[UIKeyboardAnimationDurationUserInfoKey] floatValue] : 0.0;
-    NSUInteger animationType = [userInfo[UIKeyboardAnimationCurveUserInfoKey] unsignedIntegerValue];
-
-    [UIView animateWithDuration:animationDuration
-                          delay:0.0
-                        options:animationType
-                     animations:^{
-                       [self setupView];
-                     }
-                     completion:^(BOOL finished){
-                       shouldAnimateOnKeyboardShown = NO;
-                     }];
-  }
-  else
-  {
-    // Only in iOS 8 if no animation is needed a direct call must be placed. UIView animateWithDuration:0.0 ... doesn't seem to work properly as it did in iOS 7.
-    [self setupView];
-  }
+  keyboardHeight = kbSize.height;
+  [self setupView];
 }
 
 - (void) keyboardWillHide:(NSNotification*)notification
