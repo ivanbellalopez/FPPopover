@@ -109,8 +109,12 @@
     SAFE_ARC_SUPER_DEALLOC();
 }
 
--(id)initWithContentViewController:(UIViewController*)viewController{
-  return [self initWithViewController:viewController];
+-(id)initWithContentViewController:(UIViewController*)viewController {
+  return [self initWithViewController:viewController delegate:nil];
+}
+
+-(id)initWithContentViewController:(UIViewController*)viewController delegate:(id<FPPopoverControllerDelegate>)delegate {
+  return [self initWithViewController:viewController delegate:delegate];
 }
 
 -(id)initWithViewController:(UIViewController*)viewController {
@@ -211,6 +215,8 @@
 
     [_contentView setNeedsDisplay];
     [_touchView setNeedsDisplay];
+  
+  self.contentView.backgroundColor = [UIColor whiteColor];
 }
 
 - (void)viewDidLoad

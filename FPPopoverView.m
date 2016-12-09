@@ -10,8 +10,8 @@
 #import "FPPopoverView.h"
 #import "ARCMacros.h"
 
-#define FP_POPOVER_ARROW_HEIGHT 20.0
-#define FP_POPOVER_ARROW_BASE 30.0
+#define FP_POPOVER_ARROW_HEIGHT 12.0
+#define FP_POPOVER_ARROW_BASE 24.0
 #define FP_POPOVER_RADIUS 5.0
 
 //iVars
@@ -60,9 +60,12 @@
         //we need to set the background as clear to see the view below
         self.backgroundColor = [UIColor clearColor];
         self.clipsToBounds = YES;
-        
+      
+        //Corner radius
+        _radius = FP_POPOVER_RADIUS;
+      
         self.layer.shadowOpacity = 0.7;
-        self.layer.shadowRadius = FP_POPOVER_RADIUS / 2.0;
+        self.layer.shadowRadius = _radius / 2.0;
         self.layer.shadowOffset = CGSizeMake(-3, 3);
 
         //to get working the animations
@@ -78,7 +81,9 @@
 
         //Gradient
         self.usesGradient = YES;
-        
+      
+
+      
         _titleLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         _titleLabel.backgroundColor = [UIColor clearColor];
         _titleLabel.textColor = [UIColor whiteColor];
@@ -123,9 +128,10 @@
         _contentView.clipsToBounds = YES;
         self.clipsToBounds = YES;
         self.draw3dBorder = NO;
-        _contentView.layer.cornerRadius = FP_POPOVER_RADIUS;
+        _contentView.layer.cornerRadius = _radius;
     }
 }
+
 
 #pragma mark drawing
 
@@ -136,12 +142,12 @@
     CGFloat h = self.bounds.size.height;
     CGFloat ah = FP_POPOVER_ARROW_HEIGHT; //is the height of the triangle of the arrow
     CGFloat aw = FP_POPOVER_ARROW_BASE/2.0; //is the 1/2 of the base of the arrow
-    CGFloat radius = FP_POPOVER_RADIUS;
+    CGFloat radius = self.radius;
     CGFloat b = borderWidth;
     
     //NO BORDER
     if(self.border == NO) {
-        b = 8.0;
+        b = 20.0;
     }
     
     CGRect rect;
@@ -484,7 +490,7 @@
         contentRect.size = CGSizeMake(self.bounds.size.width-20, self.bounds.size.height-70);
         _titleLabel.frame = CGRectMake(10, 30, self.bounds.size.width-20, 20);    
 		if (self.title==nil || self.title.length==0) {
-			contentRect.origin = CGPointMake(10, 30);
+			contentRect.origin = CGPointMake(10, 10);
 			contentRect.size = CGSizeMake(self.bounds.size.width-20, self.bounds.size.height-40);
 		}
     }
