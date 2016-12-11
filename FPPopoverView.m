@@ -10,9 +10,10 @@
 #import "FPPopoverView.h"
 #import "ARCMacros.h"
 
-#define FP_POPOVER_ARROW_HEIGHT 20.0
-#define FP_POPOVER_ARROW_BASE 30.0
+#define FP_POPOVER_ARROW_HEIGHT 10.0
+#define FP_POPOVER_ARROW_BASE 20.0
 #define FP_POPOVER_RADIUS 5.0
+#define FP_POPOVER_CONTENT_PADDING 10.0
 
 //iVars
 @interface FPPopoverView()
@@ -21,6 +22,7 @@
     FPPopoverArrowDirection _arrowDirection;
     UIView *_contentView;
     UILabel *_titleLabel;
+    CGFloat _contentViewPadding;
 }
 @end
 
@@ -60,9 +62,15 @@
         //we need to set the background as clear to see the view below
         self.backgroundColor = [UIColor clearColor];
         self.clipsToBounds = YES;
-        
+      
+        //default padding around content
+        _contentViewPadding = FP_POPOVER_CONTENT_PADDING;
+
+        //default radius
+        self.radius = FP_POPOVER_RADIUS;
+      
         self.layer.shadowOpacity = 0.7;
-        self.layer.shadowRadius = FP_POPOVER_RADIUS / 2.0;
+        self.layer.shadowRadius = self.radius / 2.0;
         self.layer.shadowOffset = CGSizeMake(-3, 3);
 
         //to get working the animations
@@ -123,7 +131,8 @@
         _contentView.clipsToBounds = YES;
         self.clipsToBounds = YES;
         self.draw3dBorder = NO;
-        _contentView.layer.cornerRadius = FP_POPOVER_RADIUS;
+        _contentView.layer.cornerRadius = self.radius;
+        _contentViewPadding = FP_POPOVER_CONTENT_PADDING/2;
     }
 }
 
@@ -136,12 +145,12 @@
     CGFloat h = self.bounds.size.height;
     CGFloat ah = FP_POPOVER_ARROW_HEIGHT; //is the height of the triangle of the arrow
     CGFloat aw = FP_POPOVER_ARROW_BASE/2.0; //is the 1/2 of the base of the arrow
-    CGFloat radius = FP_POPOVER_RADIUS;
-    CGFloat b = borderWidth;
+    CGFloat radius = self.radius;
+    CGFloat b = _contentViewPadding - borderWidth;
     
-    //NO BORDER
+    //NO BORDER. Then we have to match the padding otherwise will always draw a border.
     if(self.border == NO) {
-        b = 8.0;
+        b = _contentViewPadding;
     }
     
     CGRect rect;
@@ -234,7 +243,7 @@
     if(direction == FPPopoverArrowDirectionRight)
     {
         CGPathAddLineToPoint(path, NULL, outside_right, ay);
-        CGPathAddLineToPoint(path, NULL, outside_right + ah+b, ay + aw);
+        CGPathAddLineToPoint(path, NULL, outside_right + ah, ay + aw);
         CGPathAddLineToPoint(path, NULL, outside_right, ay + 2*aw);
     }
        
@@ -257,7 +266,7 @@
     if(direction == FPPopoverArrowDirectionLeft)
     {
         CGPathAddLineToPoint(path, NULL, outside_left, ay + 2*aw);
-        CGPathAddLineToPoint(path, NULL, outside_left - ah-b, ay + aw);
+        CGPathAddLineToPoint(path, NULL, outside_left - ah, ay + aw);
         CGPathAddLineToPoint(path, NULL, outside_left, ay);
     }
     
@@ -484,8 +493,8 @@
         contentRect.size = CGSizeMake(self.bounds.size.width-20, self.bounds.size.height-70);
         _titleLabel.frame = CGRectMake(10, 30, self.bounds.size.width-20, 20);    
 		if (self.title==nil || self.title.length==0) {
-			contentRect.origin = CGPointMake(10, 30);
-			contentRect.size = CGSizeMake(self.bounds.size.width-20, self.bounds.size.height-40);
+			contentRect.origin = CGPointMake(_contentViewPadding, _contentViewPadding + FP_POPOVER_ARROW_HEIGHT);
+			contentRect.size = CGSizeMake(self.bounds.size.width-(_contentViewPadding * 2), self.bounds.size.height-(_contentViewPadding * 2)-FP_POPOVER_ARROW_HEIGHT);
 		}
     }
     else if(_arrowDirection == FPPopoverArrowDirectionDown)
@@ -494,8 +503,8 @@
         contentRect.size = CGSizeMake(self.bounds.size.width-20, self.bounds.size.height-70);
         _titleLabel.frame = CGRectMake(10, 10, self.bounds.size.width-20, 20);
 		if (self.title==nil || self.title.length==0) {
-			contentRect.origin = CGPointMake(10, 10); 
-			contentRect.size = CGSizeMake(self.bounds.size.width-20, self.bounds.size.height-40);
+			contentRect.origin = CGPointMake(_contentViewPadding, _contentViewPadding);
+			contentRect.size = CGSizeMake(self.bounds.size.width-(_contentViewPadding * 2), self.bounds.size.height-(_contentViewPadding * 2)-FP_POPOVER_ARROW_HEIGHT);
 		}
     }
     
@@ -506,8 +515,8 @@
         contentRect.size = CGSizeMake(self.bounds.size.width-40, self.bounds.size.height-50);
         _titleLabel.frame = CGRectMake(10, 10, self.bounds.size.width-20-FP_POPOVER_ARROW_HEIGHT, 20);
 		if (self.title==nil || self.title.length==0) {
-			 contentRect.origin = CGPointMake(10, 10);
-			contentRect.size = CGSizeMake(self.bounds.size.width-40, self.bounds.size.height-20);
+			 contentRect.origin = CGPointMake(_contentViewPadding, _contentViewPadding);
+			contentRect.size = CGSizeMake(self.bounds.size.width-(_contentViewPadding * 2)-FP_POPOVER_ARROW_HEIGHT, self.bounds.size.height-(_contentViewPadding * 2));
 		}
     }
 
@@ -517,8 +526,8 @@
         contentRect.size = CGSizeMake(self.bounds.size.width-40, self.bounds.size.height-50);
         _titleLabel.frame = CGRectMake(10+FP_POPOVER_ARROW_HEIGHT, 10, self.bounds.size.width-20-FP_POPOVER_ARROW_HEIGHT, 20);
 		if (self.title==nil || self.title.length==0) {
-			contentRect.origin = CGPointMake(10+ FP_POPOVER_ARROW_HEIGHT, 10);
-			contentRect.size = CGSizeMake(self.bounds.size.width-40, self.bounds.size.height-20);
+			contentRect.origin = CGPointMake(_contentViewPadding + FP_POPOVER_ARROW_HEIGHT, _contentViewPadding);
+			contentRect.size = CGSizeMake(self.bounds.size.width-(_contentViewPadding * 2)-FP_POPOVER_ARROW_HEIGHT, self.bounds.size.height-(_contentViewPadding * 2));
 		}
     }
     
@@ -528,8 +537,8 @@
         contentRect.size = CGSizeMake(self.bounds.size.width-20, self.bounds.size.height-50);
         _titleLabel.frame = CGRectMake(10, 10, self.bounds.size.width-20, 20);
 		if (self.title==nil || self.title.length==0) {
-			contentRect.origin = CGPointMake(10, 10);
-			contentRect.size = CGSizeMake(self.bounds.size.width-20, self.bounds.size.height-20);
+			contentRect.origin = CGPointMake(_contentViewPadding, _contentViewPadding);
+			contentRect.size = CGSizeMake(self.bounds.size.width-(_contentViewPadding * 2), self.bounds.size.height-(_contentViewPadding * 2));
 		}
     }
 

@@ -113,6 +113,12 @@
   return [self initWithViewController:viewController];
 }
 
+-(id)initWithContentViewController:(UIViewController*)viewController
+                          delegate:(id<FPPopoverControllerDelegate>)delegate
+{
+  return [self initWithViewController:viewController delegate:delegate];
+}
+
 -(id)initWithViewController:(UIViewController*)viewController {
 	return [self initWithViewController:viewController delegate:nil];
 }
@@ -153,7 +159,7 @@
         else
           self.contentSize = [(UIViewController *)[(UINavigationController *)viewController  viewControllers][0] preferredContentSize];
       
-        self.contentSize = CGSizeMake (self.contentSize.width+20, self.contentSize.height+20+(isNavigationController?40:0));
+        self.contentSize = CGSizeMake (self.contentSize.width, self.contentSize.height+(isNavigationController?40:0));
 
         _contentView = [[FPPopoverView alloc] initWithFrame:CGRectMake(0, 0, 
                                               self.contentSize.width, self.contentSize.height)];
