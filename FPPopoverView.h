@@ -54,6 +54,7 @@ typedef enum {
 @property(nonatomic,strong) UIColor *customLineBorderColor;
 @property(nonatomic,assign) BOOL usesGradient;
 @property(nonatomic,assign) BOOL lineBorder;
+@property(nonatomic,assign) CGFloat radius;
 
 
 -(void)setArrowDirection:(FPPopoverArrowDirection)arrowDirection;
