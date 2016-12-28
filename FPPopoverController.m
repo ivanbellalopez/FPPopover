@@ -6,6 +6,8 @@
 //
 //  https://github.com/50pixels/FPPopover
 
+// From http://stackoverflow.com/questions/7017281/performselector-may-cause-a-leak-because-its-selector-is-unknown/7954697#7954697
+#pragma GCC diagnostic ignored "-Warc-performSelector-leaks"
 
 #import "FPPopoverController.h"
 
@@ -344,7 +346,8 @@
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"FPNewPopoverPresented" object:self];
 
-  if ([_viewController respondsToSelector:@selector(textFieldCanBecomeFirstResponder)])
+  SEL selector = NSSelectorFromString(@"textFieldCanBecomeFirstResponder");
+  if ([_viewController respondsToSelector:selector])
     [_viewController performSelector:@selector(textFieldCanBecomeFirstResponder)];
 }
 

@@ -64,10 +64,10 @@
 @property(nonatomic,strong) UIColor *customLineBorderColor;
 
 /** @brief Popover animation when being presented, defaults NO **/
-@property(nonatomic,assign) BOOL *shouldPresentWithBounce;
+@property(nonatomic,assign) BOOL shouldPresentWithBounce;
 
 /** @brief Popover hides while rotating as system UIPopover, defaults YES **/
-@property(nonatomic,assign) BOOL *shouldHideOnRotation;
+@property(nonatomic,assign) BOOL shouldHideOnRotation;
 
 /** @brief Popover visibility, to conform UIPopover API **/
 @property(nonatomic,readonly,getter=isPopoverVisible) BOOL visible;
