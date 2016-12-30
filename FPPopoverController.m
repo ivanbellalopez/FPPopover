@@ -348,7 +348,7 @@
 
   SEL selector = NSSelectorFromString(@"textFieldCanBecomeFirstResponder");
   if ([_viewController respondsToSelector:selector])
-    [_viewController performSelector:@selector(textFieldCanBecomeFirstResponder)];
+    [_viewController performSelector:selector];
 }
 
 
@@ -459,7 +459,7 @@
     [self setupView];
   } completion:^(BOOL finished) {
     if (self.shouldHideOnRotation)
-      [UIView animateWithDuration:0.0 delay:0.5 options:nil animations:^{
+      [UIView animateWithDuration:0.0 delay:0.5 options:0 animations:^{
       self.view.alpha = 1.0;
       } completion:nil];
   }];
